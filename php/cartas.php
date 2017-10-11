@@ -8,11 +8,11 @@
 		5 => "El_Tronco.png",
 		6 => "Leñador.png",
 		7 => "Mago_de_hielo.png",
-		7 => "Mago_eléctrico.png",
-		7 => "Megacaballero.png",
-		7 => "Minero.png",
-		7 => "Princesa.png",
-		7 => "Sabueso_de_lava.png"
+		8 => "Mago_eléctrico.png",
+		9 => "Megacaballero.png",
+		10 => "Minero.png",
+		11 => "Princesa.png",
+		12 => "Sabueso_de_lava.png"
 	);
 
 ?>

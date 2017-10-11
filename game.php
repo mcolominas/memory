@@ -10,8 +10,8 @@
             if($_SERVER['REQUEST_METHOD'] == "POST"){
                 include "php/funciones.php";
 
-                $maxFilaTablero = 3;
-                $maxColumnaTablero = 4;
+                $maxFilaTablero = 4;
+                $maxColumnaTablero = 5;
 
                 if(esPar($maxFilaTablero*$maxColumnaTablero)){
                     $baraja = getRandomCards($maxFilaTablero*$maxColumnaTablero);

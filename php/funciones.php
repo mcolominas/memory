@@ -48,7 +48,7 @@
 	}
 	function volverIndex(){
 		echo '<form action="index.html">';
-			echo '<input type="submit" name="volver" value="volver">';
+			echo '<input type="submit" value="volver">';
 		echo '</form>';
 	}
 	function generarFormEnviarPuntuacion($nombre = ""){
@@ -57,5 +57,23 @@
 			echo '<input type="text" id="inputNombre" name="nombre" value="'.$nombre.'">';
 			echo '<input type="submit" id="sendPuntuacion" name="enviar">';
 		echo '</form>';
+	}
+	function burbuja($array){
+		for($i=1;$i<count($array);$i++){
+			for($j=0;$j<count($array)-$i;$j++){
+				if($array[$j][1]>$array[$j+1][1]){
+					$k=$array[$j+1];
+					$array[$j+1]=$array[$j];
+					$array[$j]=$k;
+				}
+			}
+		}
+		return $array;
+	}
+	function mostrarRanking($array){
+		echo "<h1>RANKING</h1>";
+		foreach ($array as $value) {
+			echo $value[0].", ".$value[1]." intentos.<br>";
+		}
 	}
 ?>
