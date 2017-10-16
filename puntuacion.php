@@ -4,13 +4,16 @@
  
 		if($archivo = fopen("ranking/".$nombre_archivo, "a")){
 			if(fwrite($archivo, $_POST['nombre']. "-".$_POST['puntuacion']. "\n")){
-				echo "Se ha ejecutado correctamente";
+				fclose($archivo);
+				header("Location: index.html");
 			}else{
-				echo "Ha habido un problema al crear el archivo";
+				echo "No se ha podido escribir en el fichero.";
 			}
-			fclose($archivo);
+		}else{
+			echo "No se ha podido abrir el fichero.";
 		}
-		header("Location: index.html");
+		fclose($archivo);
+		
 	}else{
 		header("Location: index.html");
 	}

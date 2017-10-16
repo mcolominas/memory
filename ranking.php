@@ -10,7 +10,6 @@
             $nombre_archivo = "ranking";
             if($archivo = fopen("ranking/".$nombre_archivo, "r")){
                 $array = array();
-
                 while(!feof($archivo)) {
 
                     $linea = fgets($archivo);

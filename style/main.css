@@ -1,25 +1,21 @@
 img{
-  height: 100%;
-  width: 100%;
+  width: 100px;
+  height: 160px;
 }
 .card {
   width: 100px;
   height: 160px;
   transform-style: preserve-3d;
   transition: transform 1s;
-  display:inline-block;
+  margin: 5px;
 }
 
-.card div {
-  margin: 0;
-  display: block;
+.card > div {
   position: absolute;
-  width: 100%;
-  height: 100%;
   backface-visibility: hidden;
 }
 .card .front {
-  /*background: red;*/
+  background: white;
 }
 .card .back {
   background: white;
@@ -28,6 +24,24 @@ img{
 .card.flipped {
   transform: rotateY( 180deg );
 }
+
 #formPuntuacion{
   display: none;
+}
+h3{
+  text-align: center;
+}
+table{
+  margin: 0 auto;
+}
+.posicion1{
+  font-weight: bold;
+  font-size: 22px;
+}
+.posicion2{
+ font-weight: bold; 
+ font-size: 20px;
+}
+.posicion3{
+  font-weight: bold;
 }
