@@ -16,8 +16,10 @@ img{
 }
 .card .front {
   background: white;
+  z-index: 1;
 }
 .card .back {
+  z-index: 2;
   background: white;
   transform: rotateY( 180deg );
 }
@@ -44,4 +46,11 @@ table{
 }
 .posicion3{
   font-weight: bold;
+}
+audio{
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
 }

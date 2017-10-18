@@ -11,8 +11,8 @@
             if($_SERVER['REQUEST_METHOD'] == "POST"){
                 if(!empty($_POST['nombre'])){
 
-                    $maxFilaTablero = 4;
-                    $maxColumnaTablero = 4;
+                    $maxFilaTablero = 6;
+                    $maxColumnaTablero = 6;
 
                     /*
                         $maxFilaTablero = $_POST['filas'];
@@ -26,7 +26,7 @@
                             echo '<h2>No hay suficientes cartas para generar el tablero, pon un tablero mas pequeño.</h2>';
                             volverIndex();
                         }else{
-                            echo "<h3>Intentos: <span id='intentos'>0</span></h3>";
+                            echo "<h3>Tiempo: <span id='chronotime'>0:00:00</span> | Intentos: <span id='intentos'>0</span> | Bonos Disponibles: <span id='bonosDisponibles'>0</span> <input type='submit' id='btnBono' value='Utilizar bono'></h3>";
                             generarTablero($baraja, $maxFilaTablero, $maxColumnaTablero);
                             generarFormEnviarPuntuacion($_POST['nombre']);
                         }

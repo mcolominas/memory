@@ -34,8 +34,8 @@
 			for($columna = 0; $columna < $maxColumnaTablero; $columna ++){
 				echo "<td>";
 					echo '<div carta="'.$cartas[$index][0].'" class="card">';
-						echo '<div class="front"><img src="img/'.$dorsosDisponibles[array_rand($dorsosDisponibles,1)].'"></div>';
-						echo '<div class="back"><img src="img/'.$cartas[$index][1].'"></div>';
+						echo '<div class="back"><img src="img/cartas/cara/'.$cartas[$index][1].'"></div>';
+						echo '<div class="front"><img src="img/cartas/dorso/'.$dorsosDisponibles[array_rand($dorsosDisponibles,1)].'"></div>';
 					echo '</div>';
 				echo "</td>";
 				$index ++;

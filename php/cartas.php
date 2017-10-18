@@ -35,11 +35,11 @@
 	);
 
 	$dorsosDisponibles = array(
-		"dorso1.jpg",
-		"dorso2.jpg",
-		"dorso3.jpg",
-		"dorso4.jpg",
-		"dorso5.jpg"
+		"dorso1.png",
+		"dorso2.png",
+		"dorso3.png",
+		"dorso4.png",
+		"dorso5.png"
 	);
 	
 
