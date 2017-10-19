@@ -11,8 +11,8 @@
             if($_SERVER['REQUEST_METHOD'] == "POST"){
                 if(!empty($_POST['nombre'])){
 
-                    $maxFilaTablero = 6;
-                    $maxColumnaTablero = 6;
+                    $maxFilaTablero = 2;
+                    $maxColumnaTablero = 1;
 
                     /*
                         $maxFilaTablero = $_POST['filas'];
