@@ -206,7 +206,7 @@ function desbloquear(){
 	block = false;
 	haciendoMovimientos = false;
 	mostrarIntentos();
-	setTimeout(guardarPartida, 100);
+	setTimeout(guardarPartida, 800);
 }
 
 //----------------- Inicio Cronometro ------------------
@@ -269,7 +269,7 @@ function getMilisecondsChrono(){
 	return new Date(dateEnd - dateStart).getTime() + 1000;
 }
 function autoGuardarPartida(){
-	setTimeout(guardarPartida, 5000);
+	setTimeout(guardarPartida, 60000);
 }
 function guardarPartida(){
 	if(!block && !haciendoMovimientos){
