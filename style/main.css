@@ -35,21 +35,3 @@ h3{
 table{
   margin: 0 auto;
 }
-.posicion1{
-  font-weight: bold;
-  font-size: 22px;
-}
-.posicion2{
- font-weight: bold; 
- font-size: 20px;
-}
-.posicion3{
-  font-weight: bold;
-}
-audio{
-  width: 0;
-  height: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-}

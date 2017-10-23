@@ -19,6 +19,13 @@ function inicializar() {
 	addEventSubmit();
 	addEventClickBono();
 	chronoStart();
+
+	/*console.log(new Date(dateEnd - dateStart).getTime());
+
+	var fin = new Date();
+	var ini = new Date(fin.getTime() - 6028);
+	var dif = new Date(fin- ini);
+	console.log(dif.getSeconds());*/
 }
 
 //Agregar el evento click al boton de bono y programar su funcionamiento
@@ -71,58 +78,63 @@ function addEventSubmit(){
 function addEventClickListener(){
 	//Obtener todas las cartas
 	var cards = document.querySelectorAll(".card");
-	cardsDown = cards.length;
+	cardsDown = 0;
 	for ( var i  = 0, len = cards.length; i < len; i++ ) {
-		clickListener(cards[i]);
+		cardsDown ++;
+		if(!cards[i].classList.contains("flipped"))
+			cards[i].addEventListener( "click", funcionalidadJuego);
 	}
+}
 
-	//Metodo que calcula que hacer cuando se clica una carta
-	function clickListener(card) {
-		card.addEventListener( "click", function() {
-			var c = this.classList;
-			
-			if(!block){
-				//Si la carta esta boca abajo
-				if(c.contains("flipped") == false && cardsFlipped.length < 2){
-					cardsFlipped.push(this);
-					c.add("flipped");
-					playSound(soundFlip);
-				}
-
-				//Cuando las 2 cartas estan boca arriba
-				if(cardsFlipped.length == 2){
-					block = true;
-					intentos ++;
-					var cardRepe = cardsFlipped[0].getAttribute("carta") == cardsFlipped[1].getAttribute("carta");
-
-					//Si las cartas son iguales
-					if(cardRepe){
-						playSound(soundCorrect);
-						//Quitarle el evento click
-						for ( var i  = 0, len = cardsFlipped.length; i < len; i++ ) {
-							cardsFlipped[i].removeEventListener("click", function(){});
-						}
-						cardsDown -= 2;
-						desbloquear();
-						if(cardsDown <= 0)
-							finJuego();
-					//Si las cartas no son iguales
-					}else{
-						playSound(soundIncorrect, 800);
-						//Esperar X segundos y voltearla
-						setTimeout(function(){
-							playSound(soundFlip);
-							for ( var i  = 0, len = cardsFlipped.length; i < len; i++ ) {
-								cardsFlipped[i].classList.remove("flipped");
-							}
-							setTimeout(function(){
-								desbloquear();
-							}, 350); //Tiempo ha esperar para poder seleccionar mas cartas despues de mostrar las cartas
-						}, 1400); //Tiempo que se muestan las cartas
-					}
-				}
+//Metodo que calcula que hacer cuando se clica una carta
+function funcionalidadJuego(){
+	var c = this.classList;
+	console.log(getCardsFlipped());
+	if(!block){
+		//Si la carta esta boca abajo
+		if(!c.contains("flipped") && cardsFlipped.length < 2){
+			//Comprobacion de evitar que se meta la misma carta en el array
+			if(cardsFlipped.length == 1 && cardsFlipped[0] != this || cardsFlipped.length == 0){
+				cardsFlipped.push(this);
 			}
-		});
+			c.add("flipped");
+			playSound(soundFlip);
+		}
+
+		//Cuando las 2 cartas estan boca arriba
+		if(cardsFlipped.length == 2){
+			block = true;
+			intentos ++;
+			var cardRepe = cardsFlipped[0].getAttribute("carta") == cardsFlipped[1].getAttribute("carta");
+
+			//Si las cartas son iguales
+			if(cardRepe){
+				playSound(soundCorrect);
+
+				//Quitarle el evento click
+				for (var i = 0; i < cardsFlipped.length; i++ ) {
+					cardsFlipped[i].removeEventListener("click", funcionalidadJuego);
+				}
+
+				cardsDown -= 2;
+				desbloquear();
+				if(cardsDown <= 0)
+					finJuego();
+			//Si las cartas no son iguales
+			}else{
+				playSound(soundIncorrect, 800);
+				//Esperar X segundos y voltearla
+				setTimeout(function(){
+					playSound(soundFlip);
+					for ( var i = 0; i < cardsFlipped.length; i++ ) {
+						cardsFlipped[i].classList.remove("flipped");
+					}
+					setTimeout(function(){
+						desbloquear();
+					}, 350); //Tiempo ha esperar para poder seleccionar mas cartas despues de mostrar las cartas
+				}, 1400); //Tiempo que se muestan las cartas
+			}
+		}
 	}
 }
 
@@ -210,3 +222,21 @@ function chronoStop(){
 	dateEnd = new Date();
 }
 //----------------- Fin Cronometro ------------------
+
+function getCardsFlipped(){
+	//Obtener todas las cartas
+	var cards = document.querySelectorAll(".card");
+	var secuenciaCartas = "";
+	for ( var i  = 0, len = cards.length; i < len; i++ ) {
+		cardsDown ++;
+		if(cards[i].classList.contains("flipped"))
+			secuenciaCartas += "1";
+		else
+			secuenciaCartas += "0";
+	}
+	return secuenciaCartas;
+}
+
+function getMilisecondsChrono(){
+	return new Date(dateEnd - dateStart).getTime();
+}
