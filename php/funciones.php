@@ -26,13 +26,20 @@
 
 	function generarTablero($cartas = array(), $maxFilaTablero = 0, $maxColumnaTablero = 0){
 		$index = 0;
+		$cartasGuardadas = null;
+
+		if(isset($_SESSION['cartasGuardadas']))
+			$cartasGuardadas = str_split($_SESSION['cartasGuardadas']);
+
+		if(!is_array($cartasGuardadas) || count($cartasGuardadas) == 0)
+			$cartasGuardadas = null;
 
 		echo "<table>";
 		for($fila = 0; $fila < $maxFilaTablero; $fila ++){
 			echo "<tr>";
 			for($columna = 0; $columna < $maxColumnaTablero; $columna ++){
 				echo "<td>";
-					echo '<div carta="'.$cartas[$index][0].'" class="card">';
+					echo '<div carta="'.$cartas[$index][0].'" class="card'.($cartasGuardadas != null && $cartasGuardadas[$index] == 1 ? ' flipped':'').'">';
 						echo '<div class="back"><img src="img/cartas/cara/'.$cartas[$index][1].'"></div>';
 						echo '<div class="front"><img src="img/cartas/dorso/'.$cartas[$index][2].'"></div>';
 					echo '</div>';

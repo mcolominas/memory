@@ -1,10 +1,12 @@
 var cardsFlipped = []; //Array donde almacena las cartas que se han volteado hacia arriba
 var block = false; //Variable para evitar que se pueda girar las cartas
+var haciendoMovimientos = false;//Variable que indica si el usuario espa eligiendo cartas
 var intentos = 0; //Numero de intentos que lleva el usuario
 var cardsDown = 0; //Numero de cargas que estan boca abajo
 var nombre=""; //Nombre del jugador
 
-var bonosDisponibles = 3;
+var bonosDisponibles;
+var maxBonos = 3;
 
 var soundCorrect = "sounds/correct.mp3"; 
 var soundIncorrect = "sounds/incorrect.mp3"; 
@@ -14,18 +16,15 @@ var soundFlip = "sounds/flip.mp3";
 function inicializar() {
 	nombre = getName();
 	addEventClickListener();
-	setIntentos();
-	setBonos();
+	finJuego()
+	getIntentos();
+	getBonos();
+	mostrarIntentos();
+	mostrarBonos();
 	addEventSubmit();
 	addEventClickBono();
 	chronoStart();
-
-	/*console.log(new Date(dateEnd - dateStart).getTime());
-
-	var fin = new Date();
-	var ini = new Date(fin.getTime() - 6028);
-	var dif = new Date(fin- ini);
-	console.log(dif.getSeconds());*/
+	autoGuardarPartida();
 }
 
 //Agregar el evento click al boton de bono y programar su funcionamiento
@@ -33,11 +32,12 @@ function addEventClickBono(){
 	document.getElementById("btnBono").addEventListener( "click", function() {
 		if(bonosDisponibles > 0 && !block){
 			block = true;
+			haciendoMovimientos = true;
 			bonosDisponibles --;
 			intentos += 5;
 			
-			setBonos();
-			setIntentos();
+			mostrarBonos();
+			mostrarIntentos();
 			
 			var cards = document.querySelectorAll(".card");
 			
@@ -47,7 +47,7 @@ function addEventClickBono(){
 			for ( var i  = 0, len = cards.length; i < len; i++ ) {
 				if(cards[i].classList.contains("flipped") == false){
 					cardsFlipped.push(cards[i]);
-					cards[i].classList.add("flipped");
+					cards[i].classList.add("flipping");
 				}
 			}
 			
@@ -56,11 +56,9 @@ function addEventClickBono(){
 				playSound(soundFlip);
 				
 				for ( var i  = 0, len = cardsFlipped.length; i < len; i++ ) {
-					cardsFlipped[i].classList.remove("flipped");
+					cardsFlipped[i].classList.remove("flipping");
 				}
-				setTimeout(function(){
-					desbloquear();
-				}, 500); //Tiempo para poder seleccionar las cartas una vez se han volteado
+				setTimeout(desbloquear, 500); //Tiempo para poder seleccionar las cartas una vez se han volteado
 			}, 3000); //Tiempo para que las cartas se oculten
 		}
 	});
@@ -72,6 +70,12 @@ function addEventSubmit(){
 	    document.getElementById('inputPuntuacion').value = "";
 		document.getElementById('inputNombre').value = "";
 	});
+	document.getElementById("formGuardarPartida").addEventListener("submit", function myFunction() {
+	    document.getElementById('inputMilisegundos').value = "";
+		document.getElementById('inputCartas').value = "";
+		document.getElementById('inputIntentos').value = "";
+		document.getElementById('inputBonos').value = "";
+	});
 }
 
 //Agregar el evento click a las cartas y programar su funcionamiento
@@ -80,24 +84,25 @@ function addEventClickListener(){
 	var cards = document.querySelectorAll(".card");
 	cardsDown = 0;
 	for ( var i  = 0, len = cards.length; i < len; i++ ) {
-		cardsDown ++;
-		if(!cards[i].classList.contains("flipped"))
+		if(!cards[i].classList.contains("flipped")){
 			cards[i].addEventListener( "click", funcionalidadJuego);
+			cardsDown ++;
+		}
 	}
 }
 
 //Metodo que calcula que hacer cuando se clica una carta
 function funcionalidadJuego(){
 	var c = this.classList;
-	console.log(getCardsFlipped());
 	if(!block){
 		//Si la carta esta boca abajo
-		if(!c.contains("flipped") && cardsFlipped.length < 2){
+		if(!c.contains("flipped") && !c.contains("flipping") && cardsFlipped.length < 2){
 			//Comprobacion de evitar que se meta la misma carta en el array
 			if(cardsFlipped.length == 1 && cardsFlipped[0] != this || cardsFlipped.length == 0){
 				cardsFlipped.push(this);
+				haciendoMovimientos = true;
 			}
-			c.add("flipped");
+			c.add("flipping");
 			playSound(soundFlip);
 		}
 
@@ -111,15 +116,16 @@ function funcionalidadJuego(){
 			if(cardRepe){
 				playSound(soundCorrect);
 
-				//Quitarle el evento click
+				//Quitarle el evento click y sustituir la clase
 				for (var i = 0; i < cardsFlipped.length; i++ ) {
 					cardsFlipped[i].removeEventListener("click", funcionalidadJuego);
+					cardsFlipped[i].classList.remove("flipping");
+					cardsFlipped[i].classList.add("flipped");
 				}
 
 				cardsDown -= 2;
-				desbloquear();
-				if(cardsDown <= 0)
-					finJuego();
+				setTimeout(desbloquear, 200); //Tiempo para poder seleccionar las cartas una vez se han volteado
+				finJuego();
 			//Si las cartas no son iguales
 			}else{
 				playSound(soundIncorrect, 800);
@@ -127,11 +133,9 @@ function funcionalidadJuego(){
 				setTimeout(function(){
 					playSound(soundFlip);
 					for ( var i = 0; i < cardsFlipped.length; i++ ) {
-						cardsFlipped[i].classList.remove("flipped");
+						cardsFlipped[i].classList.remove("flipping");
 					}
-					setTimeout(function(){
-						desbloquear();
-					}, 350); //Tiempo ha esperar para poder seleccionar mas cartas despues de mostrar las cartas
+					setTimeout(desbloquear, 500); //Tiempo para poder seleccionar las cartas una vez se han volteado
 				}, 1400); //Tiempo que se muestan las cartas
 			}
 		}
@@ -140,20 +144,22 @@ function funcionalidadJuego(){
 
 //Metodo que se llama cuando se finaliza el juego 
 function finJuego(){
-	chronoStop();
-	
-	//Esperar X tiempo para poder reproducir el sonido
-	setTimeout(function(){
-		alert("Enhorabuena " + nombre + ", has finalizado el juego con:\n"+
-		"      ~ Intentos: " + intentos + "\n"+
-		"      ~ Tiempo: " + getTime() +
-		"\n\nVisita el ranking para saber en que puesto has quedado.");
+	if(cardsDown <= 0){
+		haciendoMovimientos = true;
+		chronoStop();
 		
-		document.getElementById('inputPuntuacion').value = intentos;
-		document.getElementById('inputNombre').value = nombre;
-		document.getElementById('sendPuntuacion').form.submit();
-	}, 800);
-	
+		//Esperar X tiempo para poder reproducir el sonido
+		setTimeout(function(){
+			alert("Enhorabuena " + nombre + ", has finalizado el juego con:\n"+
+			"      ~ Intentos: " + intentos + "\n"+
+			"      ~ Tiempo: " + getTime() +
+			"\n\nVisita el ranking para saber en que puesto has quedado.");
+			
+			document.getElementById('inputPuntuacion').value = intentos;
+			document.getElementById('inputNombre').value = nombre;
+			document.getElementById('sendPuntuacion').form.submit();
+		}, 800);
+	}
 }
 
 //Reproducir sonido
@@ -164,13 +170,29 @@ function playSound(rutaSonido, delay = 0){
 }
 
 //Metodo para actualizar los intentos que se muestan en la web
-function setIntentos(){
+function mostrarIntentos(){
 	document.getElementById("intentos").innerHTML = intentos;
 }
 
+//Metodo para obtener los intentos guardados
+function getIntentos(){
+	intentos = document.getElementById("inputIntentos").value;
+	if(intentos == null || intentos == "")
+		intentos = 0;
+	intentos = parseInt(intentos);
+}
+
 //Metodo para actualizar los bonos que se muestan en la web
-function setBonos(){
+function mostrarBonos(){
 	document.getElementById("bonosDisponibles").innerHTML = bonosDisponibles;
+}
+
+//Metodo para obtener los bonos guardados
+function getBonos(){
+	bonosDisponibles = document.getElementById("inputBonos").value;
+	if(bonosDisponibles == null || bonosDisponibles == "")
+		bonosDisponibles = maxBonos;
+	bonosDisponibles = parseInt(bonosDisponibles);
 }
 
 //Metodo para obtener el nombre del jugador
@@ -182,7 +204,9 @@ function getName(){
 function desbloquear(){
 	cardsFlipped = [];
 	block = false;
-	setIntentos();
+	haciendoMovimientos = false;
+	mostrarIntentos();
+	setTimeout(guardarPartida, 100);
 }
 
 //----------------- Inicio Cronometro ------------------
@@ -213,7 +237,11 @@ function getTime(){
 }
 //Funcion para iniciar el cronometro
 function chronoStart(){
-	dateStart = new Date();
+	var miliSeconds = document.getElementById('inputMilisegundos').value;
+	if(miliSeconds == null || miliSeconds == "")
+		miliSeconds = 0;
+
+	dateStart = new Date(new Date().getTime() - miliSeconds);
 	chrono();
 }
 //Funcion para parar el cronometro
@@ -238,5 +266,17 @@ function getCardsFlipped(){
 }
 
 function getMilisecondsChrono(){
-	return new Date(dateEnd - dateStart).getTime();
+	return new Date(dateEnd - dateStart).getTime() + 1000;
+}
+function autoGuardarPartida(){
+	setTimeout(guardarPartida, 5000);
+}
+function guardarPartida(){
+	if(!block && !haciendoMovimientos){
+		document.getElementById('inputMilisegundos').value = getMilisecondsChrono();
+		document.getElementById('inputCartas').value = getCardsFlipped();
+		document.getElementById('inputIntentos').value = intentos;
+		document.getElementById('inputBonos').value = bonosDisponibles;
+		document.getElementById('savePartida').form.submit();
+	}
 }

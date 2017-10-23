@@ -8,7 +8,7 @@
 
 		$nombre_archivo = "ranking";
  
-		if($archivo = fopen("ranking/".$nombre_archivo, "a")){
+		if($archivo = fopen("../ranking/".$nombre_archivo, "a")){
 			if(fwrite($archivo, $_POST['nombre']. "-".$_POST['puntuacion']. "\n")){
 				fclose($archivo);
 

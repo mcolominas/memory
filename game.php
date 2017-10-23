@@ -49,7 +49,16 @@
             volverIndex();
 
             function generarPagina($baraja, $filas, $columnas, $nombre){
-                echo "<h3>Tiempo: <span id='chronotime'>0:00:00</span> | Intentos: <span id='intentos'>0</span> | Bonos Disponibles: <span id='bonosDisponibles'>0</span> <input type='submit' id='btnBono' value='Utilizar bono'></h3>";
+                echo '<h3>Tiempo: <span id="chronotime">0:00:00</span> | Intentos: <span id="intentos">0</span> | Bonos Disponibles: <span id="bonosDisponibles">0</span> <input type="submit" id="btnBono" value="Utilizar bono">
+                    <br>
+                    <form id="formGuardarPartida" method="post" action="php/guardarEstadoPartida.php">
+                        <input class="ocultar" id="inputMilisegundos" type="number" name="milisegundos"'.(isset($_SESSION['tiempoPartida'])?' value="'.$_SESSION['tiempoPartida'].'"':'').'>
+                        <input class="ocultar" id="inputIntentos" type="number" name="intentos"'.(isset($_SESSION['intentosGuardadas'])?' value="'.$_SESSION['intentosGuardadas'].'"':'').'>
+                        <input class="ocultar" id="inputBonos" type="number" name="bonos"'.(isset($_SESSION['bonosGuardadas'])?' value="'.$_SESSION['bonosGuardadas'].'"':'').'>
+                        <input class="ocultar" id="inputCartas" type="number" name="cartas">
+                        <input type="submit" id="savePartida" name="datosPartida" value="Guardar Partida">
+                    </form>
+                    </h3>';
                 generarTablero($baraja, $filas, $columnas);
                 generarFormEnviarPuntuacion($nombre);
             }
