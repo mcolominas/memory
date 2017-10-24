@@ -39,10 +39,15 @@
 			echo "<tr>";
 			for($columna = 0; $columna < $maxColumnaTablero; $columna ++){
 				echo "<td>";
-					echo '<div carta="'.$cartas[$index][0].'" class="card'.($cartasGuardadas != null && $cartasGuardadas[$index] == 1 ? ' flipped':'').'">';
-						echo '<div class="back"><img src="img/cartas/cara/'.$cartas[$index][1].'"></div>';
-						echo '<div class="front"><img src="img/cartas/dorso/'.$cartas[$index][2].'"></div>';
-					echo '</div>';
+				if($cartasGuardadas != null && $cartasGuardadas[$index] == 1){
+					echo '<div carta="'.$cartas[$index][0].'" class="card flipped">';
+					echo '<div class="back"><img src="img/cartas/cara/'.$cartas[$index][1].'"></div>';
+				}else{
+					echo '<div carta="'.$cartas[$index][0].'" class="card">';
+					echo '<div class="back"><img src="img/cartas/cara/'.$cartas[$index][1].'"></div>';
+					echo '<div class="front"><img src="img/cartas/dorso/'.$cartas[$index][2].'"></div>';
+				}
+				echo '</div>';
 				echo "</td>";
 				$index ++;
 			}

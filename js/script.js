@@ -1,6 +1,25 @@
+//------ Inicio variables control de tiempo
+
+var tiempoMostrarBono = 3000 //Controla cuantos milisegundos se muestran los bonos
+var tiempoBloquearBono = 500 //Controla cuantos milisegundos quedan bloqueadas las cartas despues de mostrar los bonos
+
+var tiempoMostrarImpares = 1500 //Controla cuantos milisegundos se muestran las cartas impares
+var tiempoBloquearCartasPares = 400 //Controla cuantos milisegundos quedan bloqueadas las cartas cuando encuentra pares
+var tiempoBloquearCartasImpares = 550 //Controla cuantos milisegundos quedan bloqueadas las cartas despues de mostrar las cartas impares
+
+var tiempoDelayFinJuego = 800 //Cuantos milisegundos se muestra el tablero antes de realizar el metodo finJuego
+
+var tiempoDelaySave = 100 //Delay en milisegundos para guardar la partida despues de hacer un movimiento y no estar realizando ninguna accion
+var tiempoAutosave = 15000 //Cuantos milisegundos pasan para guardar la partida si no se hace ninguna accion
+
+var tiempoUpdateChrono = 20 //Cada cuantos milisegundos se actualiza el cronometro
+var activarMilisegundos = false;
+
+//------ Fin variables control de tiempo
+
 var cardsFlipped = []; //Array donde almacena las cartas que se han volteado hacia arriba
 var block = false; //Variable para evitar que se pueda girar las cartas
-var haciendoMovimientos = false;//Variable que indica si el usuario espa eligiendo cartas
+var haciendoMovimientos = false; //Variable que indica si el usuario esta eligiendo cartas
 var intentos = 0; //Numero de intentos que lleva el usuario
 var cardsDown = 0; //Numero de cargas que estan boca abajo
 var nombre=""; //Nombre del jugador
@@ -16,7 +35,7 @@ var soundFlip = "sounds/flip.mp3";
 function inicializar() {
 	nombre = getName();
 	addEventClickListener();
-	finJuego()
+	finJuego();
 	getIntentos();
 	getBonos();
 	mostrarIntentos();
@@ -32,22 +51,21 @@ function addEventClickBono(){
 	document.getElementById("btnBono").addEventListener( "click", function() {
 		if(bonosDisponibles > 0 && !block){
 			block = true;
-			haciendoMovimientos = true;
 			bonosDisponibles --;
 			intentos += 5;
 			
 			mostrarBonos();
 			mostrarIntentos();
 			
-			var cards = document.querySelectorAll(".card");
+			var cards = getAllCards();
 			
 			playSound(soundFlip);
 			
 			//Mostrar todas las cartas y almacenarlas en cardsFlipped
 			for ( var i  = 0, len = cards.length; i < len; i++ ) {
-				if(cards[i].classList.contains("flipped") == false){
+				if(!containFlipped(cards[i])){
 					cardsFlipped.push(cards[i]);
-					cards[i].classList.add("flipping");
+					mostrarCarta(cards[i]);
 				}
 			}
 			
@@ -55,21 +73,24 @@ function addEventClickBono(){
 			setTimeout(function(){
 				playSound(soundFlip);
 				
-				for ( var i  = 0, len = cardsFlipped.length; i < len; i++ ) {
-					cardsFlipped[i].classList.remove("flipping");
-				}
-				setTimeout(desbloquear, 500); //Tiempo para poder seleccionar las cartas una vez se han volteado
-			}, 3000); //Tiempo para que las cartas se oculten
+				for ( var i  = 0, len = cardsFlipped.length; i < len; i++ )
+					ocultarCarta(cardsFlipped[i]);
+
+				setTimeout(desbloquear, tiempoBloquearBono); //Tiempo para poder seleccionar las cartas una vez se han volteado
+			}, tiempoMostrarBono); //Tiempo para que las cartas se oculten
 		}
 	});
 }
 
-//Agregar el evento submit al formulario oculto para si el jugador presiona el boton limpiar los datos.
+//Agregar el evento submit al los formularios ocultos para si el jugador presiona el boton limpiar los datos.
 function addEventSubmit(){
+	//Formulario enviar puntuacion al finalizar el juego
 	document.getElementById("formPuntuacion").addEventListener("submit", function myFunction() {
 	    document.getElementById('inputPuntuacion').value = "";
 		document.getElementById('inputNombre').value = "";
 	});
+
+	//Formulario para guardar el juego
 	document.getElementById("formGuardarPartida").addEventListener("submit", function myFunction() {
 	    document.getElementById('inputMilisegundos').value = "";
 		document.getElementById('inputCartas').value = "";
@@ -81,10 +102,10 @@ function addEventSubmit(){
 //Agregar el evento click a las cartas y programar su funcionamiento
 function addEventClickListener(){
 	//Obtener todas las cartas
-	var cards = document.querySelectorAll(".card");
+	var cards = getAllCards();
 	cardsDown = 0;
-	for ( var i  = 0, len = cards.length; i < len; i++ ) {
-		if(!cards[i].classList.contains("flipped")){
+	for (var i  = 0; i < cards.length; i++) {
+		if(!containFlipped(cards[i])){
 			cards[i].addEventListener( "click", funcionalidadJuego);
 			cardsDown ++;
 		}
@@ -93,16 +114,16 @@ function addEventClickListener(){
 
 //Metodo que calcula que hacer cuando se clica una carta
 function funcionalidadJuego(){
-	var c = this.classList;
 	if(!block){
 		//Si la carta esta boca abajo
-		if(!c.contains("flipped") && !c.contains("flipping") && cardsFlipped.length < 2){
+		if(!containFlipping(this) && cardsFlipped.length < 2){
+			haciendoMovimientos = true;
+			
 			//Comprobacion de evitar que se meta la misma carta en el array
-			if(cardsFlipped.length == 1 && cardsFlipped[0] != this || cardsFlipped.length == 0){
+			if(cardsFlipped.length == 1 && cardsFlipped[0] != this || cardsFlipped.length == 0)
 				cardsFlipped.push(this);
-				haciendoMovimientos = true;
-			}
-			c.add("flipping");
+
+			mostrarCarta(this);
 			playSound(soundFlip);
 		}
 
@@ -119,27 +140,60 @@ function funcionalidadJuego(){
 				//Quitarle el evento click y sustituir la clase
 				for (var i = 0; i < cardsFlipped.length; i++ ) {
 					cardsFlipped[i].removeEventListener("click", funcionalidadJuego);
-					cardsFlipped[i].classList.remove("flipping");
-					cardsFlipped[i].classList.add("flipped");
+					mostrarCartaPermanentemente(cardsFlipped[i]);
 				}
 
 				cardsDown -= 2;
-				setTimeout(desbloquear, 200); //Tiempo para poder seleccionar las cartas una vez se han volteado
-				finJuego();
+				setTimeout(desbloquear, tiempoBloquearCartasPares); //Tiempo para poder seleccionar las cartas una vez se han volteado
 			//Si las cartas no son iguales
 			}else{
 				playSound(soundIncorrect, 800);
+
 				//Esperar X segundos y voltearla
 				setTimeout(function(){
 					playSound(soundFlip);
-					for ( var i = 0; i < cardsFlipped.length; i++ ) {
-						cardsFlipped[i].classList.remove("flipping");
-					}
-					setTimeout(desbloquear, 500); //Tiempo para poder seleccionar las cartas una vez se han volteado
-				}, 1400); //Tiempo que se muestan las cartas
+
+					for (var i = 0; i < cardsFlipped.length; i++)
+						ocultarCarta(cardsFlipped[i]);
+
+					setTimeout(desbloquear, tiempoBloquearCartasImpares); //Tiempo para poder seleccionar las cartas una vez se han volteado
+				}, tiempoMostrarImpares); //Tiempo que se muestan las cartas
 			}
 		}
 	}
+}
+
+//devuelve todas las cartas
+function getAllCards(){
+	return document.querySelectorAll(".card");
+}
+
+//Gira la carta para poder verla
+function mostrarCarta(carta){
+	carta.classList.add("flipping");
+}
+
+//Gira la carta para ocultarla
+function ocultarCarta(carta){
+	carta.classList.remove("flipping");
+}
+
+//Gira la carta para que se vea y no se pueda volver a voltear
+function mostrarCartaPermanentemente(carta){
+	if(carta.classList.contains("flipping"))
+		carta.classList.remove("flipping");
+	
+	carta.classList.add("flipped");
+}
+
+//devuelve si en el class contiene flipped
+function containFlipped(card){
+	return card.classList.contains("flipped");
+}
+
+//devuelve si en el class contiene flipping
+function containFlipping(card){
+	return card.classList.contains("flipping");
 }
 
 //Metodo que se llama cuando se finaliza el juego 
@@ -158,7 +212,7 @@ function finJuego(){
 			document.getElementById('inputPuntuacion').value = intentos;
 			document.getElementById('inputNombre').value = nombre;
 			document.getElementById('sendPuntuacion').form.submit();
-		}, 800);
+		}, tiempoDelayFinJuego);
 	}
 }
 
@@ -200,13 +254,13 @@ function getName(){
 	return document.getElementById('inputNombre').value;
 }
 
-//Metodo para desbloquear, limpiar variables y actualizar los intentos
+//Metodo para desbloquear, limpiar variables, actualizar los intentos ...
 function desbloquear(){
 	cardsFlipped = [];
 	block = false;
 	haciendoMovimientos = false;
 	mostrarIntentos();
-	setTimeout(guardarPartida, 800);
+	setTimeout(guardarPartida, tiempoDelaySave);
 }
 
 //----------------- Inicio Cronometro ------------------
@@ -218,13 +272,14 @@ var timerID = 0;
 function chrono(){
 	dateEnd = new Date();
 	document.getElementById("chronotime").innerHTML = getTime();
-	timerID = setTimeout("chrono()", 1000); //Actualizar el cronometro cada segundo
+	timerID = setTimeout("chrono()", tiempoUpdateChrono); //Actualizar el cronometro cada segundo
 }
 
 //Funcion que calcula el tiempo del cronometro
 function getTime(){
 	var dateDiff = new Date(dateEnd - dateStart);
 	
+	var mm = dateDiff.getMilliseconds();
 	var sec = dateDiff.getSeconds();
 	var min = dateDiff.getMinutes();
 	var hr = dateDiff.getHours()-1;
@@ -232,8 +287,13 @@ function getTime(){
 	if(hr < 10) hr = "0" + hr;
 	if(min < 10) min = "0" + min;
 	if(sec < 10) sec = "0" + sec;
+	if(mm < 10) mm = "00" + mm;
+	else if(mm < 100) mm = "0" + mm;
 	
-	return hr + ":" + min + ":" + sec;
+	if(activarMilisegundos)
+		return hr + ":" + min + ":" + sec + ":" + mm;
+	else
+		return hr + ":" + min + ":" + sec;
 }
 //Funcion para iniciar el cronometro
 function chronoStart(){
@@ -266,10 +326,10 @@ function getCardsFlipped(){
 }
 
 function getMilisecondsChrono(){
-	return new Date(dateEnd - dateStart).getTime() + 1000;
+	return new Date(dateEnd - dateStart).getTime();
 }
 function autoGuardarPartida(){
-	setTimeout(guardarPartida, 60000);
+	setTimeout(guardarPartida, tiempoAutosave);
 }
 function guardarPartida(){
 	if(!block && !haciendoMovimientos){
