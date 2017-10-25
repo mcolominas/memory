@@ -1,5 +1,5 @@
 <?php
-	if($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['nombre']) && !empty($_POST['puntuacion'])){
+	if($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['nombre']) && !empty($_POST['puntuacion']) && !empty($_POST['tiempoPartida'])){
 		session_start();
 
 		if(!isset($_SESSION['rankingLocal']))
@@ -9,15 +9,14 @@
 		$nombre_archivo = "ranking";
  
 		if($archivo = fopen("../ranking/".$nombre_archivo, "a")){
-			if(fwrite($archivo, $_POST['nombre']. "-".$_POST['puntuacion']. "\n")){
+			if(fwrite($archivo, $_POST['nombre']. "-".$_POST['puntuacion']." ".$_POST['tiempoPartida']. "\n")){
 				fclose($archivo);
 
-				$_SESSION['rankingLocal'][] = array($_POST['nombre'], $_POST['puntuacion']);
+				$_SESSION['rankingLocal'][] = array($_POST['nombre'], $_POST['puntuacion'], $_POST['tiempoPartida']);
 				$rankingLocal = $_SESSION['rankingLocal'];
 				session_destroy();
 				session_start();
 				$_SESSION['rankingLocal'] = $rankingLocal;
-
 				header("Location: ../index.php");
 			}else{
 				echo "No se ha podido escribir en el fichero.";
@@ -26,7 +25,6 @@
 		}else{
 			echo "No se ha podido abrir el fichero.";
 		}
-		
 	}else{
 		header("Location: ../index.php");
 	}

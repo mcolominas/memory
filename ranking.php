@@ -15,17 +15,17 @@ session_start();
             
             //ranking mundial
             if(file_exists("ranking/".$nombre_archivo) && $archivo = fopen("ranking/".$nombre_archivo, "r")){
-
-                
                 $array = array();
                 while(!feof($archivo)) {
 
                     $linea = fgets($archivo);
                     if(!empty($linea)){
-                    $index = strrpos($linea, "-");
-                    $nombre = substr($linea, 0, $index);
-                    $puntuacion = (int) substr($linea, $index+1);
-                    $array[] = array($nombre, $puntuacion);
+                    $index1 = strrpos($linea, " ");
+                    $index2 = strrpos($linea, "-");
+                    $nombre = substr($linea, 0, $index2);
+                    $puntuacion = (int) substr($linea, $index2+1, $index1);
+                    $tiempo = (int) substr($linea, $index1+1);
+                    $array[] = array($nombre, $puntuacion, $tiempo);
 }
                 }
                 fclose($archivo);
@@ -33,7 +33,7 @@ session_start();
                 echo "<div>";
                 echo "<h1>Ranking Mundial</h1><hr>";
                 echo "<div>";
-                generarListaRanking(burbuja($array));
+                generarListaRanking(ordenarcionArray($array, 1, 2));
                 echo "</div>";
                 echo "</div>";
             }
@@ -43,7 +43,7 @@ session_start();
                 echo "<div>";
                 echo "<h1>Ranking Local</h1><hr>";
                 echo "<div>";
-                generarListaRanking(burbuja($_SESSION['rankingLocal']));
+                generarListaRanking(ordenarcionArray($_SESSION['rankingLocal'], 1, 2));
                 echo "</div>";
                 echo "</div>";
             }

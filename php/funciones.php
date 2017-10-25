@@ -11,7 +11,6 @@
 		$keys = array_keys($cartasDisponibles);
 
 		for ($i=0; $i < $cant; $i++) { 
-
 			$baraja[] = array($keys[$i], $cartasDisponibles[$i], $dorsosDisponibles[array_rand($dorsosDisponibles,1)]);
 			$baraja[] = array($keys[$i], $cartasDisponibles[$i], $dorsosDisponibles[array_rand($dorsosDisponibles,1)]);
 		}
@@ -66,14 +65,15 @@
 	function generarFormEnviarPuntuacion($nombre = ""){
 		echo '<form id="formPuntuacion" method="post" action="php/guardarDatos.php">';
 			echo '<input type="text" id="inputPuntuacion" name="puntuacion">';
+			echo '<input type="text" id="inputTiempoPartida" name="tiempoPartida">';
 			echo '<input type="text" id="inputNombre" name="nombre" value="'.$nombre.'">';
 			echo '<input type="submit" id="sendPuntuacion" name="enviar">';
 		echo '</form>';
 	}
-	function burbuja($array){
+	function burbujaArray($array, $pos = 0){
 		for($i=1;$i<count($array);$i++){
 			for($j=0;$j<count($array)-$i;$j++){
-				if($array[$j][1]>$array[$j+1][1]){
+				if($array[$j][$pos]>$array[$j+1][$pos]){
 					$k=$array[$j+1];
 					$array[$j+1]=$array[$j];
 					$array[$j]=$k;
@@ -82,28 +82,78 @@
 		}
 		return $array;
 	}
+	function ordenarcionArray($array, $primerCampo = 0, $segundoCampo = null){
+		$array = burbujaArray($array, $primerCampo);
+		if($segundoCampo != null){
+			$nuevoArray = array();
+			while(count($array) > 0){
+				$tempArray = array();
+				$index = 0;
+				foreach ($array as $key => $value) {
+					if(count($tempArray) == 0){
+						$tempArray[] = $value;
+						unset($array[$key]);
+					}else if($tempArray[$index][$primerCampo] != $value[$primerCampo]){
+						break;
+					}else{
+						$tempArray[] = $value;
+						$index ++;
+						unset($array[$key]);
+					}
+				}
+				$tempArray = burbujaArray($tempArray, $segundoCampo);
+				foreach ($tempArray as $value) {
+					$nuevoArray[] = $value;
+				}
+			}
+			return $nuevoArray;
+		}else{
+			return $array;
+		}
+	}
 	function generarListaRanking($array){
 		$index = 1;
 		foreach ($array as $value) {
 			if($index <= 3){
-				echo "<p class='posicion".$index."'>".$value[0].", ".$value[1]." intentos.</p>";
+				echo "<p class='posicion".$index."'>".$value[0].", ".$value[1]." intentos, ".parseTimeToString($value[2]).".</p>";
 				$index ++;
 			}else{
-				echo "<p>".$value[0].", ".$value[1]." intentos.</p>";
+				echo "<p>".$value[0].", ".$value[1]." intentos, ".parseTimeToString($value[2])."</p>";
 			}
-			
 		}
 	}
 	function getDimensiones($string){
-		switch ($string) {
-			case 'opcion1':
-				return array(4, 4);
-			case 'opcion2':
-				return array(6, 6);
-			case 'opcion3':
-				return array(8, 8);
-			default:
-				return false;
+		include 'tiposTableros.php';
+		if(array_key_exists($string, $tiposTableros)){
+			return $tiposTableros[$string];
 		}
+		return false;
+	}
+
+
+
+	function parseTimeToString($miliseconds = 0){
+		$segundos = 0;
+		$minutos = 0;
+		$horas = 0;
+
+		while($miliseconds - 1000 >= 0){
+			$miliseconds -= 1000;
+			$segundos ++;
+			if($segundos >= 60){
+				$segundos -= 60;
+				$minutos ++;
+				if($minutos >= 60){
+					$minutos -= 60;
+					$horas ++;
+				}
+			}
+		}
+
+		if($horas < 10) $horas = "0".$horas;
+		if($minutos < 10) $minutos = "0".$minutos;
+		if($segundos < 10) $segundos = "0".$segundos;
+
+		return $horas.":".$minutos.":".$segundos;
 	}
 ?>

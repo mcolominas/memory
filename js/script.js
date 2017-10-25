@@ -1,18 +1,18 @@
 //------ Inicio variables control de tiempo
 
 var tiempoMostrarBono = 3000 //Controla cuantos milisegundos se muestran los bonos
-var tiempoBloquearBono = 500 //Controla cuantos milisegundos quedan bloqueadas las cartas despues de mostrar los bonos
+var tiempoBloquearBono = 800 //Controla cuantos milisegundos quedan bloqueadas las cartas despues de mostrar los bonos
 
 var tiempoMostrarImpares = 1500 //Controla cuantos milisegundos se muestran las cartas impares
-var tiempoBloquearCartasPares = 400 //Controla cuantos milisegundos quedan bloqueadas las cartas cuando encuentra pares
-var tiempoBloquearCartasImpares = 550 //Controla cuantos milisegundos quedan bloqueadas las cartas despues de mostrar las cartas impares
+var tiempoBloquearCartasPares = 600 //Controla cuantos milisegundos quedan bloqueadas las cartas cuando encuentra pares
+var tiempoBloquearCartasImpares = 800 //Controla cuantos milisegundos quedan bloqueadas las cartas despues de mostrar las cartas impares
 
 var tiempoDelayFinJuego = 800 //Cuantos milisegundos se muestra el tablero antes de realizar el metodo finJuego
 
-var tiempoDelaySave = 100 //Delay en milisegundos para guardar la partida despues de hacer un movimiento y no estar realizando ninguna accion
+var tiempoDelaySave = 0 //Delay en milisegundos para guardar la partida despues de hacer un movimiento y no estar realizando ninguna accion
 var tiempoAutosave = 15000 //Cuantos milisegundos pasan para guardar la partida si no se hace ninguna accion
 
-var tiempoUpdateChrono = 20 //Cada cuantos milisegundos se actualiza el cronometro
+var tiempoUpdateChrono = 1000 //Cada cuantos milisegundos se actualiza el cronometro
 var activarMilisegundos = false;
 
 //------ Fin variables control de tiempo
@@ -51,6 +51,8 @@ function addEventClickBono(){
 	document.getElementById("btnBono").addEventListener( "click", function() {
 		if(bonosDisponibles > 0 && !block){
 			block = true;
+			haciendoMovimientos = true;
+
 			bonosDisponibles --;
 			intentos += 5;
 			
@@ -211,6 +213,7 @@ function finJuego(){
 			
 			document.getElementById('inputPuntuacion').value = intentos;
 			document.getElementById('inputNombre').value = nombre;
+			document.getElementById('inputTiempoPartida').value = getMilisecondsChrono();
 			document.getElementById('sendPuntuacion').form.submit();
 		}, tiempoDelayFinJuego);
 	}
@@ -257,7 +260,7 @@ function getName(){
 //Metodo para desbloquear, limpiar variables, actualizar los intentos ...
 function desbloquear(){
 	cardsFlipped = [];
-	block = false;
+	//block = false;
 	haciendoMovimientos = false;
 	mostrarIntentos();
 	setTimeout(guardarPartida, tiempoDelaySave);
@@ -332,7 +335,7 @@ function autoGuardarPartida(){
 	setTimeout(guardarPartida, tiempoAutosave);
 }
 function guardarPartida(){
-	if(!block && !haciendoMovimientos){
+	if(!haciendoMovimientos){
 		document.getElementById('inputMilisegundos').value = getMilisecondsChrono();
 		document.getElementById('inputCartas').value = getCardsFlipped();
 		document.getElementById('inputIntentos').value = intentos;
