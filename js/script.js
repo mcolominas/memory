@@ -35,15 +35,15 @@ var soundFlip = "sounds/flip.mp3";
 function inicializar() {
 	nombre = getName();
 	addEventClickListener();
-	finJuego();
+	chronoStart();
 	getIntentos();
 	getBonos();
 	mostrarIntentos();
 	mostrarBonos();
 	addEventSubmit();
 	addEventClickBono();
-	chronoStart();
 	autoGuardarPartida();
+	finJuego();
 }
 
 //Agregar el evento click al boton de bono y programar su funcionamiento
@@ -275,7 +275,7 @@ var timerID = 0;
 function chrono(){
 	dateEnd = new Date();
 	document.getElementById("chronotime").innerHTML = getTime();
-	timerID = setTimeout("chrono()", tiempoUpdateChrono); //Actualizar el cronometro cada segundo
+	timerID = setTimeout("chrono()", tiempoUpdateChrono); //Actualizar el cronometro
 }
 
 //Funcion que calcula el tiempo del cronometro

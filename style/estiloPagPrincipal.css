@@ -1,0 +1,63 @@
+.central{
+}
+
+body{
+	margin: 0;
+	background-color: #f2f2f2;
+}
+.central{
+	margin: 8% auto 0 auto;
+	width: 450px;
+	min-width: 300px;
+	position: relative;
+    background-color: white;
+    border-radius: 15px;
+}
+.central > div{
+	padding: 20px;
+}
+
+input[type=text]{
+	padding: 8px 0px;
+	display:block;
+	border:none;
+	border-bottom:1px solid #ccc;
+	width:100%
+}
+.marginBottom{
+	margin-bottom: 30px;
+}
+h1{
+	margin: 0;
+    border-radius: 15px 15px 0 0;
+	padding: 14px 16px;
+	text-align: center;
+	color: white;
+	background: #333;
+}
+.btnVerde{
+    background-color: #4CAF50;
+}
+.btnVerde:hover{
+    background-color: #72CE76; 
+    color: black;
+}
+.btnRojo{
+    background-color: #E93D3D;
+}
+.btnRojo:hover{
+    background-color: #E76565;
+    color: black;
+}
+.boton{
+	font-family: arial;
+	font-size: 18px;
+    color: white;
+	display: block;
+	text-decoration: none;
+	border: none;
+	margin-bottom: 4px;
+	text-align: center;
+	width: 100%;
+	padding: 10px 0px;
+}

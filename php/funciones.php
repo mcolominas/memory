@@ -25,20 +25,20 @@
 
 	function generarTablero($cartas = array(), $maxFilaTablero = 0, $maxColumnaTablero = 0){
 		$index = 0;
-		$cartasGuardadas = null;
+		$estadoCartasTablero = null;
 
-		if(isset($_SESSION['cartasGuardadas']))
-			$cartasGuardadas = str_split($_SESSION['cartasGuardadas']);
+		if(isset($_SESSION['estadoCartasTablero']))
+			$estadoCartasTablero = str_split($_SESSION['estadoCartasTablero']);
 
-		if(!is_array($cartasGuardadas) || count($cartasGuardadas) == 0)
-			$cartasGuardadas = null;
+		if(!is_array($estadoCartasTablero) || count($estadoCartasTablero) == 0)
+			$estadoCartasTablero = null;
 
 		echo "<table>";
 		for($fila = 0; $fila < $maxFilaTablero; $fila ++){
 			echo "<tr>";
 			for($columna = 0; $columna < $maxColumnaTablero; $columna ++){
 				echo "<td>";
-				if($cartasGuardadas != null && $cartasGuardadas[$index] == 1){
+				if($estadoCartasTablero != null && $estadoCartasTablero[$index] == 1){
 					echo '<div carta="'.$cartas[$index][0].'" class="card flipped">';
 					echo '<div class="back"><img src="img/cartas/cara/'.$cartas[$index][1].'"></div>';
 				}else{
@@ -58,9 +58,7 @@
 		return $num % 2 == 0;
 	}
 	function volverIndex(){
-		echo '<form action="index.php">';
-			echo '<input type="submit" value="volver">';
-		echo '</form>';
+		echo '<a href="index.php" class="boton">&laquo; Inicio</a>';
 	}
 	function generarFormEnviarPuntuacion($nombre = ""){
 		echo '<form id="formPuntuacion" method="post" action="php/guardarDatos.php">';
@@ -112,17 +110,25 @@
 		}
 	}
 	function generarListaRanking($array){
-		$index = 1;
-		foreach ($array as $value) {
-			if($index <= 3){
-				echo "<p class='posicion".$index."'>".$value[0].", ".$value[1]." intentos, ".parseTimeToString($value[2]).".</p>";
-				$index ++;
-			}else{
-				echo "<p>".$value[0].", ".$value[1]." intentos, ".parseTimeToString($value[2])."</p>";
+		if(count($array)>0){
+			$index = 1;
+			foreach ($array as $value) {
+				if($index <= 3){
+					echo "<p class='posicion".$index."'>".$value["nombre"].", ".$value["intentos"]." intentos, ".parseTimeToString($value["tiempo"]).".</p>";
+					$index ++;
+				}else{
+					echo "<p>".$value["nombre"].", ".$value["intentos"]." intentos, ".parseTimeToString($value["tiempo"])."</p>";
+				}
 			}
+		}else{
+			echo "No hay ningún registro, se el primero.";
 		}
 	}
-	function getDimensiones($string){
+	function getAllTableros(){
+		include 'tiposTableros.php';
+		return $tiposTableros;
+	}
+	function getDimension($string){
 		include 'tiposTableros.php';
 		if(array_key_exists($string, $tiposTableros)){
 			return $tiposTableros[$string];
@@ -130,9 +136,7 @@
 		return false;
 	}
 
-
-
-	function parseTimeToString($miliseconds = 0){
+	function parseTimeToString($miliseconds = 0, $mostrarMilisegundos = false){
 		$segundos = 0;
 		$minutos = 0;
 		$horas = 0;
@@ -153,7 +157,9 @@
 		if($horas < 10) $horas = "0".$horas;
 		if($minutos < 10) $minutos = "0".$minutos;
 		if($segundos < 10) $segundos = "0".$segundos;
+		if($miliseconds < 10) $miliseconds = "00".$miliseconds;
+		else if($miliseconds < 100) $miliseconds = "0".$miliseconds;
 
-		return $horas.":".$minutos.":".$segundos;
+		return $horas.":".$minutos.":".$segundos.($mostrarMilisegundos ? ":".$miliseconds : "");
 	}
 ?>
