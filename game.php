@@ -47,10 +47,10 @@
                 volverIndex();
             }else{
                 echo '<h3><div><a href="index.php" class="boton">&laquo; Inicio</a> </div>
-                            <div>Tiempo: <span id="chronotime">0:00:00</span> | </div>
-                            <div>Intentos: <span id="intentos">0</span> | </div>
-                            <div>Bonos Disponibles: <span id="bonosDisponibles">0</span> </div>
-                            <div><a class="boton" id="btnBono">Utilizar bono</a></div>
+                            <div>Tiempo: <span id="chronotime">0:00:00</span><span class="separador"> | </span></div>
+                            <div>Intentos: <span id="intentos">0</span><span class="separador"> | </span></div>
+                            <div>Bonos Disponibles: <span id="bonosDisponibles">0</span> <a class="boton" id="btnBono">Utilizar bono</a></div>
+                            
                             <form id="formGuardarPartida" method="post" action="php/guardarEstadoPartida.php">
                                 <input id="inputMilisegundos" type="number" name="milisegundos"'.(isset($_SESSION['tiempoPartida'])?' value="'.$_SESSION['tiempoPartida'].'"':'').'>
                                 <input id="inputIntentos" type="number" name="intentos"'.(isset($_SESSION['intentos'])?' value="'.$_SESSION['intentos'].'"':'').'>

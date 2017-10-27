@@ -36,7 +36,7 @@ img{
 h3{
   text-align: center;
   background-color: white;
-  width: 60%;
+  width: 70%;
   margin: 25px auto;
   padding: 10px;
   border-radius: 20px;
@@ -50,4 +50,29 @@ table{
 }
 h3 > div{
   display:inline-block;
+  padding: 5px 0;
+}
+
+@media screen and (max-width: 600px){
+  .separador{
+    display: none;
+  }
+  h3{
+    width: 100%;
+    padding: 10px 0;
+  }
+  h3 > div{
+    display:block;
+  }
+  .boton{
+    border-radius: 50px;
+    display: block;
+    width: 90%;
+  }
+  .boton a:hover{
+    border-radius: 50px;
+  }
+  #btnBono{
+    margin-top: 10px;
+  }
 }

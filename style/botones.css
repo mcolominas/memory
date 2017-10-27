@@ -4,7 +4,7 @@
     text-decoration: none;
     display: inline-block;
     padding: 8px 16px;
-    border-radius: 10%;
+    border-radius: 25px;
     background-color: #4CAF50;
     color: white;
     border:none;
@@ -13,6 +13,5 @@
 .boton:hover {
     background-color: #72CE76 !important; 
     color: black !important;
-    border-radius: 10% !important;
     cursor:pointer; cursor: hand;
 }

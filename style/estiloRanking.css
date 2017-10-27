@@ -74,7 +74,7 @@ ul.topnav li a, ul.topnav li span{
 	text-decoration: none;
 }
 
-.topnav a:hover:not(.active) {
+.topnav a:hover:not(.active):not(.boton) {
 	background-color: #111;
 	border-radius: 10px;}
 
