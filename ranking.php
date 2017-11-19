@@ -1,10 +1,14 @@
 <?php
-session_start();
+    session_start();
 ?>
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Memory - Ranking</title>
+
         <link rel="stylesheet" type="text/css" href="style/estiloRanking.css"> 
         <link rel="stylesheet" type="text/css" href="style/botones.css"> 
 	</head> 
@@ -22,11 +26,11 @@ session_start();
             }
 
             if(isset($_GET['orderBy'])){
-                if($_GET['orderBy'] == "tiempo" || $_GET['orderBy'] == "intentos"){
+                if($_GET['orderBy'] == "tiempo" || $_GET['orderBy'] == "fallos"){
                     $_SESSION['orderBy'] = $_GET['orderBy'];
                 }
             }else{
-                $_SESSION['orderBy'] = "intentos";
+                $_SESSION['orderBy'] = "fallos";
             }
             $orderBy = $_SESSION['orderBy'];
             $indexTableroMostrar = $_SESSION['indexTablero'];
@@ -43,7 +47,7 @@ session_start();
                 $url = "ranking.php?indexTablero=".$indexTableroMostrar."&orderBy=";
                 echo '<ul class="right">
                     <li><span>Ordenar Por:</span></li>
-                    <li><a '.($orderBy == "intentos" ? 'class="active" ' : '').'href="'.$url.'intentos">Intentos</a></li>
+                    <li><a '.($orderBy == "fallos" ? 'class="active" ' : '').'href="'.$url.'fallos">Fallos</a></li>
                     <li><a '.($orderBy == "tiempo" ? 'class="active" ' : '').'href="'.$url.'tiempo">Tiempo</a></li>
                 </ul>
             </ul>';
@@ -69,16 +73,16 @@ session_start();
                     $nombre = substr($linea, 0, $index2);
                     $puntuacion = (int) substr($linea, $index2+1, $index1);
                     $tiempo = (int) substr($linea, $index1+1);
-                    $rankingMundial[] = array("nombre" => $nombre, "intentos" => $puntuacion, "tiempo" => $tiempo);
+                    $rankingMundial[] = array("nombre" => $nombre, "fallos" => $puntuacion, "tiempo" => $tiempo);
 }
                 }
                 fclose($archivo);
             }
 
-            if($orderBy == "intentos")
-                generarListaRanking(ordenarcionArray($rankingMundial, "intentos", "tiempo"));
+            if($orderBy == "fallos")
+                generarListaRanking(ordenarcionArray($rankingMundial, "fallos", "tiempo"));
             else
-                generarListaRanking(ordenarcionArray($rankingMundial, "tiempo", "intentos"));
+                generarListaRanking(ordenarcionArray($rankingMundial, "tiempo", "fallos"));
 
             echo "</div>";
             echo "</div>";
@@ -94,10 +98,10 @@ session_start();
                     echo "<div>";
                     echo "<h2>Ranking Local</h2><hr>";
                     echo "<div>";
-                    if($orderBy == "intentos")
-                        generarListaRanking(ordenarcionArray($rankingLocal, "intentos", "tiempo"));
+                    if($orderBy == "fallos")
+                        generarListaRanking(ordenarcionArray($rankingLocal, "fallos", "tiempo"));
                     else
-                        generarListaRanking(ordenarcionArray($rankingLocal, "tiempo", "intentos"));
+                        generarListaRanking(ordenarcionArray($rankingLocal, "tiempo", "fallos"));
                     echo "</div>";
                     echo "</div>";
                 }

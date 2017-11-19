@@ -1,5 +1,5 @@
 <?php
-	if($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['nombre']) && !empty($_POST['puntuacion']) && !empty($_POST['tiempoPartida'])){
+	if($_SERVER['REQUEST_METHOD'] == 'POST' && estaLleno($_POST['nombre']) && estaLleno($_POST['puntuacion']) && estaLleno($_POST['tiempoPartida'])){
 		session_start();
 
 		if(!isset($_SESSION['rankingLocal']))
@@ -7,9 +7,8 @@
  
 		if($archivo = fopen("../ranking/".$_SESSION['tipoTableroPartidaActual'], "a")){
 			if(fwrite($archivo, $_POST['nombre']. "-".$_POST['puntuacion']." ".$_POST['tiempoPartida']. "\n")){
-				fclose($archivo);
 
-				$_SESSION['rankingLocal'][] = array("nombre" => $_POST['nombre'], "intentos" => $_POST['puntuacion'], "tiempo" => $_POST['tiempoPartida'], "indexTablero" => $_SESSION['tipoTableroPartidaActual']);
+				$_SESSION['rankingLocal'][] = array("nombre" => $_POST['nombre'], "fallos" => $_POST['puntuacion'], "tiempo" => $_POST['tiempoPartida'], "indexTablero" => $_SESSION['tipoTableroPartidaActual']);
 				$rankingLocal = $_SESSION['rankingLocal'];
 				session_destroy();
 				session_start();
@@ -24,5 +23,8 @@
 		}
 	}else{
 		header("Location: ../index.php");
+	}
+	function estaLleno($string){
+		return (isset($string) && $string != null && $string != "");
 	}
 ?>

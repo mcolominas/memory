@@ -3,35 +3,38 @@
 		include "cartas.php";
 
 		$cant /= 2;
-		if($cant > count($cartasDisponibles))
+		if($cant > count($cartasDisponibles) && esPar($cant))
 			return false;
 
+		mezclarBaraja($cartasDisponibles);
+
 		$baraja = array();
-		$barajaRandom = array();
 		$keys = array_keys($cartasDisponibles);
 
 		for ($i=0; $i < $cant; $i++) { 
 			$baraja[] = array($keys[$i], $cartasDisponibles[$i], $dorsosDisponibles[array_rand($dorsosDisponibles,1)]);
 			$baraja[] = array($keys[$i], $cartasDisponibles[$i], $dorsosDisponibles[array_rand($dorsosDisponibles,1)]);
 		}
+		
+		mezclarBaraja($baraja);
+		return $baraja;
+	}
+
+	function mezclarBaraja(&$baraja){
+		$barajaRandom = array();
 
 		while(count($baraja) > 0){
 			$index = array_rand($baraja, 1);
 			$barajaRandom[] = $baraja[$index];
 			unset($baraja[$index]);
 		}
-		return $barajaRandom;
+
+		$baraja = $barajaRandom;
 	}
 
 	function generarTablero($cartas = array(), $maxFilaTablero = 0, $maxColumnaTablero = 0){
 		$index = 0;
-		$estadoCartasTablero = null;
-
-		if(isset($_SESSION['estadoCartasTablero']))
-			$estadoCartasTablero = str_split($_SESSION['estadoCartasTablero']);
-
-		if(!is_array($estadoCartasTablero) || count($estadoCartasTablero) == 0)
-			$estadoCartasTablero = null;
+		$estadoCartasTablero = getCartasTablero();
 
 		echo "<table>";
 		for($fila = 0; $fila < $maxFilaTablero; $fila ++){
@@ -41,6 +44,10 @@
 				if($estadoCartasTablero != null && $estadoCartasTablero[$index] == 1){
 					echo '<div carta="'.$cartas[$index][0].'" class="card flipped">';
 					echo '<div class="back"><img src="img/cartas/cara/'.$cartas[$index][1].'"></div>';
+				}else if($estadoCartasTablero != null && $estadoCartasTablero[$index] == 2){
+					echo '<div carta="'.$cartas[$index][0].'" class="card flipping">';
+					echo '<div class="back"><img src="img/cartas/cara/'.$cartas[$index][1].'"></div>';
+					echo '<div class="front"><img src="img/cartas/dorso/'.$cartas[$index][2].'"></div>';
 				}else{
 					echo '<div carta="'.$cartas[$index][0].'" class="card">';
 					echo '<div class="back"><img src="img/cartas/cara/'.$cartas[$index][1].'"></div>';
@@ -53,6 +60,22 @@
 			echo "</tr>";
 		}
 		echo "</table>";
+	}
+
+	function getCartasTablero(){
+		$estadoCartasTablero = null;
+
+		if(isset($_SESSION['estadoCartasTablero'])){
+			if(substr_count($_SESSION['estadoCartasTablero'], "2") > 2)
+				$_SESSION['estadoCartasTablero'] = str_replace("2","0",$_SESSION['estadoCartasTablero']);
+
+			$estadoCartasTablero = str_split($_SESSION['estadoCartasTablero']);
+		}
+
+		if(!is_array($estadoCartasTablero) || count($estadoCartasTablero) == 0)
+			$estadoCartasTablero = null;
+
+		return $estadoCartasTablero;
 	}
 	function esPar($num){
 		return $num % 2 == 0;
@@ -114,10 +137,10 @@
 			$index = 1;
 			foreach ($array as $value) {
 				if($index <= 3){
-					echo "<p class='posicion".$index."'>".$value["nombre"].", ".$value["intentos"]." intentos, ".parseTimeToString($value["tiempo"]).".</p>";
+					echo "<p class='posicion".$index."'>".$value["nombre"].", ".$value["fallos"]." fallos, ".parseTimeToString($value["tiempo"]).".</p>";
 					$index ++;
 				}else{
-					echo "<p>".$value["nombre"].", ".$value["intentos"]." intentos, ".parseTimeToString($value["tiempo"])."</p>";
+					echo "<p>".$value["nombre"].", ".$value["fallos"]." fallos, ".parseTimeToString($value["tiempo"])."</p>";
 				}
 			}
 		}else{

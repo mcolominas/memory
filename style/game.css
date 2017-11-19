@@ -30,7 +30,7 @@ img{
   transform: rotateY( 180deg );
 }
 
-#formPuntuacion, #formGuardarPartida{
+#formPuntuacion, .ocultar{
   display: none;
 }
 h3{

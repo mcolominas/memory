@@ -5,6 +5,11 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Memory - Game</title>
+
+        <script type="text/JavaScript" src="js/jquery-3.2.1.js"></script>
         <script type="text/JavaScript" src="js/script.js"></script>
         <link rel="stylesheet" type="text/css" href="style/game.css"> 
         <link rel="stylesheet" type="text/css" href="style/botones.css"> 
@@ -48,16 +53,12 @@
             }else{
                 echo '<h3><div><a href="index.php" class="boton">&laquo; Inicio</a> </div>
                             <div>Tiempo: <span id="chronotime">0:00:00</span><span class="separador"> | </span></div>
-                            <div>Intentos: <span id="intentos">0</span><span class="separador"> | </span></div>
+                            <div>Fallos: <span id="fallos">0</span><span class="separador"> | </span></div>
                             <div>Bonos Disponibles: <span id="bonosDisponibles">0</span> <a class="boton" id="btnBono">Utilizar bono</a></div>
                             
-                            <form id="formGuardarPartida" method="post" action="php/guardarEstadoPartida.php">
-                                <input id="inputMilisegundos" type="number" name="milisegundos"'.(isset($_SESSION['tiempoPartida'])?' value="'.$_SESSION['tiempoPartida'].'"':'').'>
-                                <input id="inputIntentos" type="number" name="intentos"'.(isset($_SESSION['intentos'])?' value="'.$_SESSION['intentos'].'"':'').'>
-                                <input id="inputBonos" type="number" name="bonos"'.(isset($_SESSION['bonos'])?' value="'.$_SESSION['bonos'].'"':'').'>
-                                <input id="inputCartas" type="number" name="cartas">
-                                <input type="submit" id="savePartida" name="datosPartida">
-                            </form></h3>';
+                            <div class="ocultar"><input id="inputMilisegundos" type="number" name="milisegundos"'.(isset($_SESSION['tiempoPartida'])?' value="'.$_SESSION['tiempoPartida'].'"':'').'>
+                                <input id="inputfallos" type="number" name="fallos"'.(isset($_SESSION['fallos'])?' value="'.$_SESSION['fallos'].'"':'').'>
+                                <input id="inputBonos" type="number" name="bonos"'.(isset($_SESSION['bonos'])?' value="'.$_SESSION['bonos'].'"':'').'></div></h3>';
                 generarTablero($_SESSION['tablero'], $_SESSION['filas'], $_SESSION['columnas']);
                 generarFormEnviarPuntuacion($_SESSION['nombre']);
             }
