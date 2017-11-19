@@ -218,7 +218,7 @@ function finJuego(){
 	//Esperar X tiempo para poder reproducir el sonido
 	setTimeout(function(){
 		alert("Enhorabuena " + nombre + ", has finalizado el juego con:\n"+
-		"      ~ fallos: " + fallos + "\n"+
+		"      ~ Fallos: " + fallos + "\n"+
 		"      ~ Tiempo: " + getTime() +
 		"\n\nVisita el ranking para saber en que puesto has quedado.");
 		
